@@ -1,0 +1,22 @@
+
+
+.topicsPic ul li .itemPic{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    font-size:2em;
+}
+.topicsPic ul li{
+    width: 32%;
+    text-align: center;
+    padding-top: 31%;
+    margin-left: 1%;
+    margin-top: 1%;
+    margin-bottom:0;
+    position: relative;
+    clear:inherit;
+    cursor:pointer;
+    float:left;
+}

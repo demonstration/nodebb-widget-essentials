@@ -58,11 +58,15 @@
 		},
 		{
 			"hook": "filter:widget.render:suggestedtopics", "method": "renderSuggestedTopics"
+		},
+		{
+			"hook": "filter:widget.render:recentorpopulartopicsbycid", "method": "renderRecentOrPopularTopicsByCid"
 		}
 	],
 	"templates": "./public/templates",
 	"css": [
-    	"public/css/widget.css"
+    	"public/css/widget.css",
+		"public/css/topicsPic.css"
     ],
     "compatibility": "^0.5.0 || ^0.6.0 || ^0.7.0 || ^0.8.0"
 }

@@ -36,7 +36,7 @@
 			"admin/categorieswidget.tpl", "admin/populartags.tpl",
 			"admin/populartopics.tpl", "admin/mygroups.tpl",
 			"admin/activeusers.tpl", "admin/latestusers.tpl",
-			"admin/groupposts.tpl"
+			"admin/groupposts.tpl", "admin/recentorpopulartopicsbycid.tpl"
 		];
 
 		function loadTemplate(template, next) {
@@ -400,6 +400,51 @@
 		}
 	};
 
+	Widget.renderRecentOrPopularTopicsByCid = function (widget, callback) {
+		var numTopics = widget.data.numTopics || 9;
+		var cid = widget.data.cid || 1;
+		var type = widget.data.type || 'recent';
+		var set;
+		if(type === 'recent') {
+			set = 'cid:' + cid + ':tids';
+		} else {
+			set = 'cid:' + cid + ':tids:posts';
+		}
+
+		categories.getCategoryTopics({
+			cid: cid,
+			uid: widget.uid,
+			set: set,
+			reverse: true,
+			start: 0,
+			stop: Number(numTopics)-1
+		}, function(err, data) {
+			if (err) {
+				return callback(err);
+			}
+			data.topics = data.topics.filter(function(topic) {
+				return topic && !topic.deleted;
+			});
+
+			db.getObjectField('category:' + cid, 'name', function (err, title) {
+				if(err) {
+					return callback(err);
+				}
+
+				app.render('widgets/recentpopulartopics', {
+					title: title,
+					topics: data.topics,
+					numTopics: numTopics,
+					relative_path: nconf.get('relative_path')
+				}, function(err, html) {
+					translator.translate(html, function(translatedHTML) {
+						callback(err, translatedHTML);
+					});
+				});
+			});
+		});
+	};
+
 	Widget.defineWidgets = function(widgets, callback) {
 		widgets = widgets.concat([
 			{
@@ -497,6 +542,12 @@
 				name: "Suggested Topics",
 				description: "Lists of suggested topics.",
 				content: Widget.templates['admin/recenttopics.tpl']
+			},
+			{
+				widget: "recentorpopulartopicsbycid",
+				name: "Recent or Popular Topics by Category",
+				description: "Renders Recent or Popular Topics by Category",
+				content: Widget.templates['admin/recentorpopulartopicsbycid.tpl']
 			}
 		]);
 
