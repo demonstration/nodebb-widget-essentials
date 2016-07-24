@@ -445,6 +445,47 @@
 		});
 	};
 
+	Widget.renderRankUsers = function (widget, callback) {
+		var usersTags = ['users','online','posts','reputation'];
+		var usersKeys = ['users:joindate','users:online','users:postcount','users:reputation'];
+		var usersData = [];
+		async.forEachOfSeries(usersKeys, function (value, key, callback) {
+			controllers.users.getUsers(value, widget.uid, '1', function(err, userData) {
+				if (err) {
+					return callback(err);
+				}
+
+				if(value === 'users:online') {
+					userData.users = userData.users.filter(function(user) {
+						return user && user.status !== 'offline';
+					});
+				}
+
+				var tmpData = {
+					tag: usersTags[key],
+					users: userData.users
+				};
+				tmpData['route_' + value] = true;
+				usersData.push(tmpData);
+
+				callback();
+			});
+		}, function (err) {
+			if(err) {
+				return callback(err);
+			}
+
+			app.render('widgets/rankusers', {
+				usersData: usersData,
+				relative_path: nconf.get('relative_path')
+			}, function(err, html) {
+				translator.translate(html, function(translatedHTML) {
+					callback(err, translatedHTML);
+				});
+			});
+		});
+	};
+
 	Widget.defineWidgets = function(widgets, callback) {
 		widgets = widgets.concat([
 			{
@@ -548,6 +589,12 @@
 				name: "Recent or Popular Topics by Category",
 				description: "Renders Recent or Popular Topics by Category",
 				content: Widget.templates['admin/recentorpopulartopicsbycid.tpl']
+			},
+			{
+				widget: "rankusers",
+				name: "Rank Users",
+				description: "Renders the /user page",
+				content: Widget.templates['admin/defaultwidget.tpl']
 			}
 		]);
 

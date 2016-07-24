@@ -61,6 +61,9 @@
 		},
 		{
 			"hook": "filter:widget.render:recentorpopulartopicsbycid", "method": "renderRecentOrPopularTopicsByCid"
+		},
+		{
+			"hook": "filter:widget.render:rankusers", "method": "renderRankUsers"
 		}
 	],
 	"templates": "./public/templates",
@@ -68,5 +71,8 @@
     	"public/css/widget.css",
 		"public/css/topicsPic.css"
     ],
+	"scripts": [
+		"./lib/rankusers.js"
+	],
     "compatibility": "^0.5.0 || ^0.6.0 || ^0.7.0 || ^0.8.0"
 }
